@@ -1,21 +1,21 @@
+//===================== Importing Module and Packages =====================//
 const express = require('express')
-const { model } = require('mongoose')
 const router = express.Router()
-const { regStudent, logStudent } = require("../controller/studentController")
-const { createSubject, editSubject, getSubject, deleteSubject } = require("../controller/subjectController")
+const { regTeacher, logTeacher } = require("../controller/teacherController")
+const { createSutudentDeatils, updateMarks, getStudentDetails, deleteDetails } = require("../controller/studentController")
 const { Authentication, Authorization } = require("../middleWare/auth")
 
-router.post('/studentRegistration', regStudent)
 
-router.post('/studentLogin', logStudent)
+//<<<============================= Teacher API's =============================>>>//
+router.post('/teacherRegistration', regTeacher)
+router.post('/teacherLogin', logTeacher)
+
+//<<<============================= Student Marks API's =============================>>>//
+router.post('/addStudentDetails/:userId', Authentication, Authorization, createSutudentDeatils)
+router.put('/updateMarks/:userId', Authentication, Authorization, updateMarks)
+router.get('/getDetails', Authentication, getStudentDetails)
+router.delete('/deleteStudentDetails/:userId', Authentication, Authorization, deleteDetails)
 
 
-router.post('/createSubject', Authentication, createSubject)
-
-router.put('/addMarks', Authentication, editSubject)
-
-router.get('/getDetails', Authentication, getSubject)
-
-router.delete('/deleteSubject', Authentication, deleteSubject)
-
+//<<<============================= Module Export =============================>>>//
 module.exports = router

@@ -1,6 +1,7 @@
 //===================== Importing Module and Packages =====================//
 const JWT = require('jsonwebtoken')
-const studentSchema = require("../model/studentModel")
+const teacherModel = require("../model/teacherModel")
+const { isValid, isValidName, isValidEmail, isValidPwd, isValidBody, isValidNum, isValidObjectId } = require("../validation/validator")
 // const subjectSchema = require('../model/subjectModel')
 
 
@@ -15,7 +16,7 @@ const Authentication = async (req, res, next) => {
         if (!token) { return res.status(400).send({ status: false, message: "Token must be Present." }) }
         token = token.slice(7)
         //===================== Verify token & asigning it's value in request body =====================//
-        JWT.verify(token, "AALu", function (error, decodedToken) {
+        JWT.verify(token, "AALuu Lelo", function (error, decodedToken) {
             if (error) {
                 return res.status(401).send({ status: false, message: "Invalid Token." })
             } else {
@@ -25,7 +26,7 @@ const Authentication = async (req, res, next) => {
         })
 
     } catch (error) {
-     
+
         res.status(500).send({ status: false, error: error.message })
     }
 }
@@ -41,14 +42,14 @@ const Authorization = async (req, res, next) => {
         let userId = req.params.userId
 
         //===================== Checking the userId is Valid or Not by Mongoose =====================//
-        if (!validator.isValidObjectId(userId)) return res.status(400).send({ status: false, message: `This UserId: ${userId} is not valid!` })
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: `This UserId: ${userId} is not valid!` })
 
         //===================== Fetching All User Data from DB =====================//
-        let userData = await studentSchema.findById(userId)
+        let userData = await teacherModel.findById(userId)
         if (!userData) return res.status(404).send({ status: false, message: "User Does Not Exist" })
 
         //x===================== Checking the userId is Authorized Person or Not =====================x//
-        if (userData['_id'].toString() !== req.token.payload.userId) {
+        if (userData['_id'].toString() !== req.token.userId) {
             return res.status(403).send({ status: false, message: "Unauthorized User Access!" })
         }
 
@@ -63,5 +64,4 @@ const Authorization = async (req, res, next) => {
 
 
 //================================= Module Export ==============================================//
-
 module.exports = { Authentication, Authorization }

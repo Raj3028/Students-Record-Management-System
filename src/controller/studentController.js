@@ -1,71 +1,34 @@
-const studentModel = require("../model/studentModel")
-const JWT = require("jsonwebtoken")
+//===================== Importing Module and Packages =====================//
+const studentModel = require('../model/studentModel')
+const teacherModel = require("../model/teacherModel")
 const validation = require("../validation/validator")
-const bcrypt = require("bcrypt")
 
-const regStudent = async (req, res) => {
 
-    try {
-
-        const data = req.body
-
-        const { name, email, password } = data
-        if (validation.isValidBody(data)) return res.status(400).send({ status: false, msg: "please provide  details" })
-        if (!validation.isValid(name)) return res.status(400).send({ status: false, message: "name is required" })
-        if (!validation.isValidName(name)) return res.status(400).send({ status: false, message: " name is not valid" })
-        if (!validation.isValid(email)) return res.status(400).send({ status: false, message: "email is required" })
-        if (!validation.isValidEmail(email)) return res.status(400).send({ status: false, message: "email is not valid" })
-
-        let checkEmail = await studentModel.findOne({ email: email })
-        if (checkEmail) return res.status(409).send({ status: false, msg: "email already exist" })
-
-        if (!validation.isValid(password)) return res.status(400).send({ status: false, message: "password is required" })
-        if (!validation.isValidPwd(password)) return res.status(400).send({ status: false, message: "Password length should be 8 to 15 digits and enter atleast one uppercase also one special character" })
-
-        const saltRounds = 10
-        const hash = bcrypt.hashSync(password, saltRounds)
-        data.password = hash
-
-        const studentReg = await studentModel.create(data)
-
-        return res.status(201).send({ status: true, Message: `${name} created sucessfully.`, data: studentReg })
-
-    } catch (error) {
-
-        return res.status(500).send({ status: false, Message: error.message })
-    }
-}
-
-const logStudent = async (req, res) => {
+const createSutudentDeatils = async (req, res) => {
 
     try {
 
-        const data = req.body
+        let { studentName, subject, marks } = req.body
+        if (validation.isValidBody(req.body)) return res.status(400).send({ status: false, msg: "please provide  details to add subject and marks" })
 
-        if (validation.isValidBody(data)) return res.status(400).send({ status: false, msg: "please provide  details" })
+        let userId = req.params.userId
 
-        const { email, password } = data
+        if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+        if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
+        if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
+        if (!validation.isValidNum(marks)) return res.status(400).send({ status: false, message: "marks is not valid is  and it's only take number" })
 
-        if (!validation.isValid(email)) return res.status(400).send({ status: false, message: "email is required" })
-        if (!validation.isValid(password)) return res.status(400).send({ status: false, message: "Pasworrd is required" })
+        const userName = await teacherModel.findById(userId)
 
-        let findStudent = await studentModel.findOne({ email: email })
-        if (!findStudent) return res.status(404).send({ status: false, message: "the email id entered is wrong" })
-    
-        let bcryptPass = await bcrypt.compare(password, findStudent.password)
-        if (!bcryptPass) return res.status(404).send({ status: false, message: "The entered password is wrong" })
+        const checkSubject = await studentModel.findOne({ teacherID: userId, studentName: studentName, subject: subject })
 
-        // const fetchData = await studentModel.findOne({ email: email, password: password })
+        if (checkSubject) return res.status(400).send({ status: false, message: `This subject: ${subject} is already present for this ${userName.name}!` })
 
-        // if (!fetchData) return res.status(404).send({ status: false, Message: "You have to registration first." })
+        const obj = { teacherID: userId, studentName: studentName, subject: subject, marks: marks }
 
-        const payload = {
-            userId: findStudent._id.toString(),
-        }
+        const createSubject = await studentModel.create(obj)
 
-        const token = JWT.sign(payload, "AALu", { expiresIn: '1d' })
-
-        return res.status(200).send({ status: true, Token: token })
+        return res.status(201).send({ status: true, Message: "Created Sucessfully", data: createSubject })
 
     } catch (error) {
 
@@ -75,4 +38,88 @@ const logStudent = async (req, res) => {
 
 
 
-module.exports = { regStudent, logStudent }
+const updateMarks = async (req, res) => {
+
+    try {
+
+        let data = req.body
+        let { studentName, subject, marks } = data
+        if (validation.isValidBody(data)) return res.status(400).send({ status: false, msg: "Enter details to update marks" })
+
+        let userId = req.params.userId
+
+        if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+        if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
+        if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
+        if (!validation.isValidNum(marks)) return res.status(400).send({ status: false, message: "marks is not valid is  and it's only take number" })
+
+        // const userName = await teacherModel.findById(userId)
+
+        let addMark = await studentModel.findOneAndUpdate({ teacherID: userId, studentName: studentName, subject: subject, isdeleted: false },
+            { $inc: { marks: marks } }, { new: true })
+
+        if (!addMark) return res.status(404).send({ status: false, message: `This Student: ${studentName} is not exist with this Subject: ${subject}. You have to create first.` })
+
+        return res.status(200).send({ status: true, message: "Mark Updated Sucessfully!", data: addMark })
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, Message: error.message })
+    }
+}
+
+
+const getStudentDetails = async (req, res) => {
+
+    try {
+
+        // let userId = req.params.userId
+
+        let data = req.query
+        let { studentName, subject, ...rest } = data
+
+        if (!validation.isValidBody(rest)) return res.status(400).send({ status: false, message: `You can't get with this filter!` })
+
+        // const userName = await teacherModel.findById(userId)
+
+        const fetchData = await studentModel.find({ $regex: studentName, subject, isdeleted: false }).select({ _id: 0, studentName: 1, subject: 1, marks: 1 })
+
+        if (validation.isValidBody(fetchData)) return res.status(404).send({ status: false, message: "No Student data found!" })
+
+        return res.status(200).send({ status: true, message: "Sucess!", data: fetchData })
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, Message: error.message })
+    }
+}
+
+
+const deleteDetails = async (req, res) => {
+
+    try {
+
+        let data = req.body
+        let { studentName, subject } = data
+
+        let userId = req.params.userId
+
+        // const userName = await teacherModel.findById(userId)
+
+        let deleteSubject = await studentModel.findOneAndUpdate({ teacherID: userId, studentName: studentName, subject: subject, isdeleted: false }, { isdeleted: true, deletedAt: new Date() })
+
+        if (!deleteSubject) return res.status(400).send({ status: false, message: "Subject doesn't exist or deleted!" })
+
+        return res.status(200).send({ status: true, message: "Sucessfully Deleted!" })
+
+    } catch (error) {
+
+        return res.status(500).send({ status: false, Message: error.message })
+    }
+}
+
+
+
+
+//===================== Module Export =====================//
+module.exports = { createSutudentDeatils, updateMarks, getStudentDetails, deleteDetails }
