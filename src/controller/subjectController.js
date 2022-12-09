@@ -1,5 +1,6 @@
 const subjectModel = require('../model/subjectModel')
 const studentModel = require("../model/studentModel")
+const validation = require("../validation/validator")
 
 
 const createSubject = async (req, res) => {
@@ -7,9 +8,15 @@ const createSubject = async (req, res) => {
     try {
 
         let { subject, marks } = req.body
+        if (validation.isValidBody(req.body)) return res.status(400).send({ status: false, msg: "please provide  details to add subject and marks" })
 
         let userId = req.token.userId
 
+        if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+        if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
+        if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
+        if (!validation.isValidNum(marks)) return res.status(400).send({ status: false, message: "marks is not valid is  and it's only take number" })
+        
         const userName = await studentModel.findById(userId)
 
         const checkSubject = await subjectModel.findOne({ name: userName.name, subject: subject })
@@ -36,8 +43,16 @@ const editSubject = async (req, res) => {
 
         let data = req.body
         let { subject, marks } = data
+        if (validation.isValidBody(data)) return res.status(400).send({ status: false, msg: "Enter details to update marks" })
+
 
         let userId = req.token.userId
+
+        if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+        if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
+        if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
+        if (!validation.isValidNum(marks)) return res.status(400).send({ status: false, message: "marks is not valid is  and it's only take number" })
+        
 
         const userName = await studentModel.findById(userId)
 
