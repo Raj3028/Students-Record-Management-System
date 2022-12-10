@@ -80,7 +80,7 @@
 - Return HTTP status 201 on a succesful book creation. Also return the book document.
 - Return HTTP status 400 for an invalid request
 
-### PUT //updateMarks/:userId
+### PUT /updateMarks/:userId
 - Update a Student by updating its marks
 - The student and subject combination that
 already exists in the database then include the marks in existing marks.
@@ -102,6 +102,16 @@ already exists in the database then include the marks in existing marks.
  }
  ```
  - Then the total should be 125
+
+### GET /getDetails
+- Returns all students in the collection that aren't deleted.
+- Return the HTTP status 200 if any documents are found.
+- If no documents are found then return an HTTP status 404 with a response.
+- Filter students list by applying filters. Query param can have any combination of below filters.
+  - By subject
+  - By studentName
+
+
 
  
 
