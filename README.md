@@ -92,5 +92,16 @@ already exists in the database then include the marks in existing marks.
  Subject : "Maths"
  Marks : 75
  }
- ```       
+ ``` 
+ - If we add the same data again
+ ```yaml
+ {
+ Name :  "Jhon" 
+ Subject : "Maths"
+ Marks : 50
+ }
+ ```
+ - Then the total should be 125
+
+ 
 
