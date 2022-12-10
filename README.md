@@ -86,8 +86,8 @@
 already exists in the database then include the marks in existing marks.
 - otherwise, Return response  message This Student is not exist with this Subject. You have to create first.create a new student record.
 - For example, You have a current record in the database
--Name :  Jhon 
--Subject : Maths
--Marks : 75
+- Name :  Jhon 
+- Subject : Maths
+- Marks : 75
         
 
