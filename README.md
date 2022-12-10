@@ -112,6 +112,16 @@ already exists in the database then include the marks in existing marks.
   - By studentName
 - Student data will appear separately as per the logged-in user.
 
+### DELETE /deleteStudentDetails/:userId
+- Check if the Student exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
+- If the book document doesn't exist then return an HTTP status of 404 with a suitable  Error message.
+
+### Authentication
+- Make sure all the Student routes are protected.
+
+### Authorisation
+- Make sure that only logged-in user(teacher) is able to create,get, edit or delete the StudentDetails for his students only.
+- In case of unauthorized access return an appropirate error message.
 
 
 
