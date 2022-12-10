@@ -2,6 +2,7 @@
 const mongoose = require("mongoose")
 
 
+
 //===================== Teacher's Schema =====================//
 const teacherSchema = new mongoose.Schema({
 
@@ -17,6 +18,7 @@ const teacherSchema = new mongoose.Schema({
     }
 
 }, { timestamps: true })
+
 
 
 //===================== Module Export =====================//
