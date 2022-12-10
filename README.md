@@ -110,6 +110,8 @@ already exists in the database then include the marks in existing marks.
 - Filter students list by applying filters. Query param can have any combination of below filters.
   - By subject
   - By studentName
+- Student data will appear separately as per the logged-in user.
+
 
 
 
