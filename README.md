@@ -79,3 +79,13 @@
 - Make sure the teacherId is a valid teacherId by checking the user exist in the teacher collection.
 - Return HTTP status 201 on a succesful book creation. Also return the book document.
 - Return HTTP status 400 for an invalid request
+
+### PUT //updateMarks/:userId
+- Update a Student by updating its marks
+- The student and subject combination that
+already exists in the database then include the marks in existing marks.
+- otherwise, Return response  message This Student is not exist with this Subject. You have to create first.create a new student record.
+- For example, You have a current record in the database
+  -Name   -Subject  -Marks
+  Jhon    Maths       75
+
