@@ -61,3 +61,21 @@
 
 }
 ```
+## Teacher APIs 
+### POST /teacherRegistration
+- Create a Teacher 
+- Create a Teacher document from request body.
+- Return HTTP status 201 on a succesful user creation. Also return the user document.
+- Return HTTP status 400 if no params or invalid params received in request body.
+
+### POST /teacherIdLogin
+- Allow an user to login with their email and password.
+- On a successful login attempt return a JWT token contatining the userId, exp, iat.
+- If the credentials are incorrect return a suitable error message with a valid HTTP status code.
+
+## Student APIs
+### POST /addStudentDetails/:userId
+- Create a Student document from request body. use teacherId in params.
+- Make sure the teacherId is a valid teacherId by checking the user exist in the teacher collection.
+- Return HTTP status 201 on a succesful book creation. Also return the book document.
+- Return HTTP status 400 for an invalid request
