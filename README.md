@@ -120,7 +120,7 @@ already exists in the database then include the marks in existing marks.
 - Make sure all the Student routes are protected.
 
 ### Authorisation
-- Make sure that only logged-in user(teacher) is able to create,get, edit or delete the StudentDetails for his students only.
+- Make sure that only logged-in user(teacher) is able to create, get, edit or delete the StudentDetails for his students only.
 - In case of unauthorized access return an appropirate error message.
 
 

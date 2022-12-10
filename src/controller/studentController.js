@@ -13,6 +13,8 @@ const createSutudentDeatils = async (req, res) => {
 
         let userId = req.params.userId
 
+        if (!validation.isValid(studentName)) return res.status(400).send({ status: false, message: "studentName is required" })
+        if (!validation.isValidName(studentName)) return res.status(400).send({ status: false, message: "studentName should be alphabets." })
         if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
         if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
         if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
@@ -48,12 +50,12 @@ const updateMarks = async (req, res) => {
 
         let userId = req.params.userId
 
+        if (!validation.isValid(studentName)) return res.status(400).send({ status: false, message: "studentName is required" })
+        if (!validation.isValidName(studentName)) return res.status(400).send({ status: false, message: "studentName should be alphabets." })
         if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
         if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
         if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "marks is required" })
         if (!validation.isValidNum(marks)) return res.status(400).send({ status: false, message: "marks is not valid is  and it's only take number" })
-
-        // const userName = await teacherModel.findById(userId)
 
         let addMark = await studentModel.findOneAndUpdate({ teacherID: userId, studentName: studentName, subject: subject, isdeleted: false },
             { $inc: { marks: marks } }, { new: true })
@@ -73,16 +75,26 @@ const getStudentDetails = async (req, res) => {
 
     try {
 
-        // let userId = req.params.userId
-
         let data = req.query
         let { studentName, subject, ...rest } = data
 
         if (!validation.isValidBody(rest)) return res.status(400).send({ status: false, message: `You can't get with this filter!` })
 
-        // const userName = await teacherModel.findById(userId)
+        let obj = { teacherID: req.token.userId, isdeleted: false }
 
-        const fetchData = await studentModel.find({ $regex: studentName, subject, isdeleted: false }).select({ _id: 0, studentName: 1, subject: 1, marks: 1 })
+        if (studentName) {
+            if (!validation.isValid(studentName)) return res.status(400).send({ status: false, message: "studentName is required" })
+            if (!validation.isValidName(studentName)) return res.status(400).send({ status: false, message: "studentName should be alphabets." })
+            obj.studentName = { $regex: studentName }
+        }
+
+        if (subject) {
+            if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+            if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
+            obj.subject = subject
+        }
+
+        const fetchData = await studentModel.find(obj).select({ _id: 0, studentName: 1, subject: 1, marks: 1 })
 
         if (validation.isValidBody(fetchData)) return res.status(404).send({ status: false, message: "No Student data found!" })
 
@@ -104,7 +116,11 @@ const deleteDetails = async (req, res) => {
 
         let userId = req.params.userId
 
-        // const userName = await teacherModel.findById(userId)
+        if (!validation.isValid(studentName)) return res.status(400).send({ status: false, message: "studentName is required" })
+        if (!validation.isValidName(studentName)) return res.status(400).send({ status: false, message: "studentName should be alphabets." })
+
+        if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "subject is required" })
+        if (!validation.isValidName(subject)) return res.status(400).send({ status: false, message: " subject is not valid is  and it's only take alphabets" })
 
         let deleteSubject = await studentModel.findOneAndUpdate({ teacherID: userId, studentName: studentName, subject: subject, isdeleted: false }, { isdeleted: true, deletedAt: new Date() })
 

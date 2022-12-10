@@ -17,5 +17,6 @@ router.get('/getDetails', Authentication, getStudentDetails)
 router.delete('/deleteStudentDetails/:userId', Authentication, Authorization, deleteDetails)
 
 
+router.all("/*", function (req, res) { res.status(404).send({ status: false, message: "URL not found." }) })
 //<<<============================= Module Export =============================>>>//
 module.exports = router
