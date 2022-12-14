@@ -24,7 +24,7 @@ const createSutudentDeatils = async (req, res) => {
 
         const checkSubject = await studentModel.findOne({ teacherID: userId, studentName: studentName, subject: subject })
 
-        if (checkSubject) return res.status(400).send({ status: false, message: `This subject: ${subject} is already present for this ${userName.name}!` })
+        if (checkSubject) return res.status(400).send({ status: false, message: `This subject: ${subject} is already present for this ${checkSubject.studentName}!` })
 
         const obj = { teacherID: userId, studentName: studentName, subject: subject, marks: marks }
 
